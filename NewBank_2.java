@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.text.DecimalFormat;
 
 class Conta {
     private final String titular;
@@ -21,7 +22,8 @@ class Conta {
     public void Depositar(double valor) {
         if (verificarValor(valor) != true) {return;}
         saldo += valor;
-        System.out.println("Deposito de R$" + valor + " realizado com sucesso");
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println("Deposito de R$" + df.format(valor) + " realizado com sucesso");
     }
 
     public void Sacar(double valor) {
@@ -29,7 +31,8 @@ class Conta {
 
         if (valor <= saldo) {
             saldo -= valor;
-            System.out.println("Saque de R$" + valor + " realizado com sucesso");
+            DecimalFormat df = new DecimalFormat("#.00");
+            System.out.println("Saque de R$" + df.format(valor) + " realizado com sucesso");
         } else {
             System.out.println("Saldo indisponivel");
         }
@@ -43,76 +46,95 @@ class Conta {
         return saldo;
     }
 
-    public void mensagemEmLoop (Scanner scanner) { 
-    int opcao;
+    private double lerValorComValidacao(Scanner scanner, String mensagem) {
+        while (true) {
+            System.out.print(mensagem);
+            String entrada = scanner.nextLine().trim();
 
-    do {
-        System.out.println("\n \n \n ==== CAIXA ELETRÔNICO NEW BANK ====");
-        System.out.println("TITULAR: "+ this.getTitular());
-        System.out.println("\n 1 - Depositar");
-        System.out.println("2 - Sacar");
-        System.out.println("3 - Consultar saldo");
-        System.out.println("0 - Sair");
+            // Verificar se tem no máximo 2 casas decimais
+            if (entrada.contains(".")) {
+                String[] partes = entrada.split("\\.");
+                if (partes.length == 2 && partes[1].length() > 2) {
+                    System.out.println("Valor deve ter no máximo 2 casas decimais. Tente novamente.");
+                    continue;
+                }
+            } else if (entrada.contains(",")) {
+                String[] partes = entrada.split(",");
+                if (partes.length == 2 && partes[1].length() > 2) {
+                    System.out.println("Valor deve ter no máximo 2 casas decimais. Tente novamente.");
+                    continue;
+                }
+                // Converter vírgula para ponto
+                entrada = entrada.replace(",", ".");
+            }
 
-        opcao = scanner.nextInt();
-
-        switch (opcao) {
-            case 1 -> {
-                System.out.print("\n \n \nDigite o valor para depósito: R$");
-                double deposito = scanner.nextDouble();
-                this.Depositar(deposito);
-            }
-            case 2 -> {
-                System.out.print("\n \n \nDigite o valor para saque: R$");
-                double saque = scanner.nextDouble();
-                this.Sacar(saque);
-            }
-            case 3 -> {
-                System.out.println("\n \n \n O saldo atual é de: R$" + this.getSaldo() + "\n ");
-            }
-            case 0 -> {}
-            default -> {
-                System.out.print("\n \n \n Opção inválida, por favor tente novamente\n ");
+            try {
+                double valor = Double.parseDouble(entrada);
+                if (verificarValor(valor) == true) {return Math.round(valor * 100.0) / 100.0;}// Arredondar para 2 casas decimais
+            } catch (NumberFormatException e) {
+                System.out.println("Valor inválido. Digite apenas números. Tente novamente.");
             }
         }
-    } while (opcao != 0);
-}
+    } 
+
+    public void mensagemEmLoop() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            int opcao;
+
+            do {
+                System.out.println("\n \n \n ==== CAIXA ELETRÔNICO NEW BANK ====");
+                System.out.println("TITULAR: "+ this.getTitular());
+                System.out.println("\n1 - Depositar");
+                System.out.println("2 - Sacar");
+                System.out.println("3 - Consultar saldo");
+                System.out.println("0 - Sair");
+
+                System.out.print("Escolha uma opção: ");
+                String entradaOpcao = scanner.nextLine().trim();
+                try {
+                    opcao = Integer.parseInt(entradaOpcao);
+                } catch (NumberFormatException e) {
+                    System.out.println("Opção inválida. Digite apenas números.");
+                    opcao = -1;
+                    continue;
+                }
+
+                switch (opcao) {
+                    case 1 -> {
+                        double deposito = lerValorComValidacao(scanner, "\n \n \nDigite o valor para depósito: R$");
+                        this.Depositar(deposito);
+                    }
+                    case 2 -> {
+                        double saque = lerValorComValidacao(scanner, "\n \n \nDigite o valor para saque: R$");
+                        this.Sacar(saque);
+                    }
+                    case 3 -> {
+                        DecimalFormat df = new DecimalFormat("#.00");
+                        System.out.println("\n \n \n O saldo atual é de: R$" + df.format(this.getSaldo()) + "\n ");
+                    }
+                    case 0 -> {}
+                    default -> {
+                        System.out.print("\n \n \n Opção inválida, por favor tente novamente\n ");
+                    }
+                }
+            } while (opcao != 0);
+        }
+    }
 
 }
 
 
 public class NewBank_2 {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         
         //Conta c001 = new Conta("Andrey", 2600);
         Conta c002 = new Conta("André", 100000000);
 
         //c001.mensagemEmLoop(scanner);
 
-        c002.mensagemEmLoop(scanner);
+        c002.mensagemEmLoop();
 
         System.out.println("\n \n \n Obrigado por utilizar o caixa eletronico \n \n \n");
-        scanner.close();
     }
 
 }
-
-/*
- 
-
-
-    criar uma classe conta com titular e saldo
-    seu metodoconstrutor
-    um verificador de valor
-    o metodo depositar
-    o metodo sacar
-    os getters
-
-    a função "do" em u mmetodo a ser chamado
-
-chamar o scanner ( Scanner scanner = new Scanner(System.in);)
-
-lembrar de fechar o scanner no final ( scanner.close();)
-
- */
