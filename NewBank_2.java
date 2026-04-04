@@ -45,12 +45,56 @@ class Conta {
 
 }
 
+public void mensagemEmLoop (Conta conta) { //para questões de segurança, é valido deixar a conta como parametro?
+    int opcao;
+
+    do {
+        System.out.println("\n \n \n ==== CAIXA ELETRÔNICO NEW BANK ====");
+        System.out.println("TITULAR: "+ conta.getTitular());
+        System.out.println("\n 1 - Depositar");
+        System.out.println("2 - Sacar");
+        System.out.println("3 - Consultar saldo");
+        System.out.println("0 - Sair");
+
+        opcao = scanner.nextInt();
+
+        switch (opcao){
+            case 1:
+                System.out.println("\n \n \nDigite o valor para depósito: R$ \n \n \n");
+                double deposito = scanner.nextDouble();
+                conta.Depositar(deposito);
+                break;
+            case 2:
+                System.out.println("\n \n \nDigite o valor para saque: R$ \n \n \n");
+                double saque = scanner.nextDouble();
+                conta.Sacar(saque);
+                break;
+            case 3:
+                System.out.println("\n \n \n O saldo atual é de: R$" + conta.getSaldo() + "\n \n \n");
+                break;
+            case 0:
+                break;
+            default:
+                System.out.print("\n \n \n Opção inválida, por favor tente novamente\n \n \n");
+                break;
+        };
+    } while (opcao !=0);
+}
+
+
+
 public class NewBank_2 {
+    public static void main(String[] args) {
+        
+        
+    }
 
 }
 
 /*
  
+
+
     criar uma classe conta com titular e saldo
     seu metodoconstrutor
     um verificador de valor
