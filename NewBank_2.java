@@ -1,12 +1,33 @@
 import java.util.Scanner;
 import java.text.DecimalFormat;
 
+class Cliente {
+    protected String nome;
+    protected int idade;
+
+    public Cliente(String nome, int idade) {
+        this.nome = nome;
+        if (idade >= 16) {
+            this.idade = idade;
+        } else {System.out.println("O cliente é menor de idade, não pode criar uma conta");}
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getIdade() {
+        return idade;
+    }
+    
+}
+
 class Conta {
     private final String titular;
     private double saldo;
 
-    public Conta(String titular, double saldo) {
-        this.titular = titular;
+    public Conta(Cliente cliente, double saldo) {
+        this.titular = cliente.getNome();
         this.saldo = saldo;
     }
 
@@ -126,11 +147,20 @@ class Conta {
 
 public class NewBank_2 {
     public static void main(String[] args) {
-        
+       /*
         //Conta c001 = new Conta("Andrey", 2600);
         Conta c002 = new Conta("André", 100000000);
 
         //c001.mensagemEmLoop(scanner);
+
+        c002.mensagemEmLoop();
+       */ 
+
+        Cliente cpf1 = new Cliente("Andrey", 20);
+        Conta c001 = new Conta(cpf1, 2600);
+        
+        Cliente cpf2 = new Cliente("André", 24);
+        Conta c002 = new Conta(cpf2, 100000000);
 
         c002.mensagemEmLoop();
 
