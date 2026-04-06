@@ -25,8 +25,8 @@ class Cliente {
 
 
 class Conta {
-    private final String titular;
-    private double saldo;
+    protected final String titular;
+    protected double saldo;
     // private String Patamar;
 
     public Conta(Cliente cliente, double saldo /*, String Patamar */) {
@@ -61,6 +61,8 @@ class Conta {
         }
     }
 
+    
+
     public void Depositar(double valor) {
         if (verificarValorPositivo(valor) != true) {return;}
         saldo += valor;
@@ -70,15 +72,12 @@ class Conta {
 
     public void Sacar(double valor) {
         if (verificarValorPositivo(valor) != true) {return;}
+        if (verificarSaldo(valor) != true) {return;}
         
+        saldo -= valor;
 
-        if (valor <= saldo) {
-            saldo -= valor;
-            DecimalFormat df = new DecimalFormat("#.00");
-            System.out.println("Saque de R$" + df.format(valor) + " realizado com sucesso");
-        } else {
-            System.out.println("Saldo indisponivel");
-        }
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println("Saque de R$" + df.format(valor) + " realizado com sucesso");
     }
 
     public String getTitular(){
@@ -186,6 +185,16 @@ class ContaCorrente extends Conta{
         super(cliente, saldo);
     }
 
+    @Override
+    public void Sacar(double valor) {
+        if (verificarValorPositivo(valor) != true) {return;}
+        if (verificarSaldo(valor) != true) {return;}
+
+        saldo -= valor*1.05; // taxa de 5%
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println("Saque de R$" + df.format(valor) + " realizado com sucesso");
+    }
 }
 /*
 public class NewBank_2 {
