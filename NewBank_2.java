@@ -22,16 +22,19 @@ class Cliente {
     
 }
 
+
+
 class Conta {
     private final String titular;
     private double saldo;
+    // private String Patamar;
 
-    public Conta(Cliente cliente, double saldo) {
+    public Conta(Cliente cliente, double saldo /*, String Patamar */) {
         this.titular = cliente.getNome();
         this.saldo = saldo;
     }
 
-    public boolean verificarValor(double valor) {
+    public boolean verificarValorPositivo(double valor) {
         if (valor > 0) {
             return true;
         } else {
@@ -40,15 +43,34 @@ class Conta {
         }
     }
 
+    public boolean verificarValorLimite (double valor){
+        if (valor < 1000) {
+            return true;
+        } else {
+            System.out.println("O limite diario para saques e tranferencias é de apenas R$1.000,00");
+            return false;
+        }
+    }
+
+    public boolean verificarSaldo (double valor){
+        if (saldo >= valor) {
+           return true;
+        } else {
+           System.out.println("Saldo indisponivel, por favor verifique e tente novamente");
+        return false;
+        }
+    }
+
     public void Depositar(double valor) {
-        if (verificarValor(valor) != true) {return;}
+        if (verificarValorPositivo(valor) != true) {return;}
         saldo += valor;
         DecimalFormat df = new DecimalFormat("#.00");
         System.out.println("Deposito de R$" + df.format(valor) + " realizado com sucesso");
     }
 
     public void Sacar(double valor) {
-        if (verificarValor(valor) != true) {return;}
+        if (verificarValorPositivo(valor) != true) {return;}
+        
 
         if (valor <= saldo) {
             saldo -= valor;
@@ -91,7 +113,7 @@ class Conta {
 
             try {
                 double valor = Double.parseDouble(entrada);
-                if (verificarValor(valor) == true) {return Math.round(valor * 100.0) / 100.0;}// Arredondar para 2 casas decimais
+                if (verificarValorPositivo(valor) == true) {return Math.round(valor * 100.0) / 100.0;}// Arredondar para 2 casas decimais
             } catch (NumberFormatException e) {
                 System.out.println("Valor inválido. Digite apenas números. Tente novamente.");
             }
@@ -142,25 +164,39 @@ class Conta {
         }
     }
 
+    public void transferir(Conta destino, double valor) {
+        if (verificarValorPositivo(valor) != true) {return;}
+        if (verificarValorLimite(valor) != true) {return;}
+        if (verificarSaldo (valor) != true) {return;}
+        
+        saldo -= valor;
+
+        destino.saldo += valor;
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println("Transferencia de R$" + df.format(valor) + " realizada com sucesso para:" + destino.getTitular());
+    
+    }
+
 }
 
+class ContaCorrente extends Conta{
 
+    public ContaCorrente(Cliente cliente, double saldo) {
+        super(cliente, saldo);
+    }
+
+}
+/*
 public class NewBank_2 {
     public static void main(String[] args) {
-       /*
-        //Conta c001 = new Conta("Andrey", 2600);
-        Conta c002 = new Conta("André", 100000000);
 
-        //c001.mensagemEmLoop(scanner);
-
-        c002.mensagemEmLoop();
-       */ 
 
         Cliente cpf1 = new Cliente("Andrey", 20);
         Conta c001 = new Conta(cpf1, 2600);
         
         Cliente cpf2 = new Cliente("André", 24);
-        Conta c002 = new Conta(cpf2, 100000000);
+        ContaCorrente c002 = new ContaCorrente(cpf2, 100000000);
 
         c002.mensagemEmLoop();
 
@@ -168,3 +204,21 @@ public class NewBank_2 {
     }
 
 }
+
+
+
+
+Parte 2 - Questões Práticas
+1. Implemente um método transferir entre contas.
+public boolean transferir(Conta destino, double valor) {
+    // implemente
+}
+2. Crie validação com exceção no método depositar.
+
+
+3. Crie ContaCorrente com taxa de saque.
+4. Implemente histórico com ArrayList.
+5. Crie menu interativo com Scanner
+
+
+*/
