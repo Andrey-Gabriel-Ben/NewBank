@@ -1,6 +1,8 @@
-import java.util.Scanner;
 import java.text.DecimalFormat;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 
 class Cliente {
     protected String nome;
@@ -25,14 +27,25 @@ class Cliente {
 class Conta {
     protected final String titular;
     protected double saldo;
-    // private String Patamar;
+    protected  String patamar; //para fins de calculo de juros
+    protected List<String> extrato = new ArrayList<>();
 
-    public Conta(Cliente cliente, double saldo /*, String Patamar */) {
+    public Conta(Cliente cliente, double saldo, String patamar) {
         this.titular = cliente.getNome();
         this.saldo = saldo;
+
+        extrato.add("Conta criada com saldo: R$ " + Formatar(saldo));
     }
 
-    private String Formatar(Double valor){
+    protected void ExibirExtrato(){
+        System.out.println("\n ==== EXTRATO ====");
+
+        for (String l : extrato) {
+            System.out.println(l);
+        }
+    }
+
+    protected String Formatar(Double valor){
         DecimalFormat df = new DecimalFormat("#.00");
         return df.format(valor);
     }
@@ -67,6 +80,8 @@ class Conta {
     public void Depositar(double valor) {
         if (verificarValorPositivo(valor) != true) {return;}
         saldo += valor;
+        
+        extrato.add("Deposito de R$" + Formatar(valor) + " realizado com sucesso");
         System.out.println("Deposito de R$" + Formatar(valor) + " realizado com sucesso");
     }
 
@@ -75,7 +90,8 @@ class Conta {
         if (verificarSaldo(valor) != true) {return;}
         
         saldo -= valor;
-
+        
+        extrato.add("Saque de R$" + Formatar(valor) + " realizado com sucesso");
         System.out.println("Saque de R$" + Formatar(valor) + " realizado com sucesso");
     }
 
@@ -87,7 +103,7 @@ class Conta {
         return saldo;
     }
 
-    private double lerValorComValidacao(Scanner scanner, String mensagem) {
+    protected double lerValorComValidacao(Scanner scanner, String mensagem) {
         while (true) {
             System.out.print(mensagem);
             String entrada = scanner.nextLine().trim();
@@ -128,6 +144,7 @@ class Conta {
                 System.out.println("\n1 - Depositar");
                 System.out.println("2 - Sacar");
                 System.out.println("3 - Consultar saldo");
+                System.out.println("4 - Exibir extrato");
                 System.out.println("0 - Sair");
 
                 System.out.print("Escolha uma opção: ");
@@ -152,6 +169,9 @@ class Conta {
                     case 3 -> {
                         System.out.println("\n \n \n O saldo atual é de: R$" + Formatar(this.getSaldo()) + "\n ");
                     }
+                    case 4 -> {
+                        this.ExibirExtrato();
+                    }
                     case 0 -> {}
                     default -> {
                         System.out.print("\n \n \n Opção inválida, por favor tente novamente\n ");
@@ -170,6 +190,8 @@ class Conta {
 
         destino.saldo += valor;
 
+        
+        extrato.add("Transferencia de R$" + Formatar(valor) + " realizada com sucesso para:" + destino.getTitular());
         System.out.println("Transferencia de R$" + Formatar(valor) + " realizada com sucesso para:" + destino.getTitular());
     
     }
@@ -178,8 +200,8 @@ class Conta {
 
 class ContaCorrente extends Conta{
 
-    public ContaCorrente(Cliente cliente, double saldo) {
-        super(cliente, saldo);
+    public ContaCorrente(Cliente cliente, double saldo, String patamar) {
+        super(cliente, saldo, patamar);
     }
 
     @Override
@@ -187,22 +209,23 @@ class ContaCorrente extends Conta{
         if (verificarValorPositivo(valor) != true) {return;}
         if (verificarSaldo(valor) != true) {return;}
 
-        saldo -= valor*1.05; // taxa de 5%
+        saldo -= valor*1.05; // taxa de 5%, porém futuramente será tratado com patamares
 
+        extrato.add("Saque de R$" + Formatar(valor) + " realizado com sucesso");
         System.out.println("Saque de R$" + Formatar(valor) + " realizado com sucesso");
     }
 }
 
-/*
+
 public class NewBank_2 {
     public static void main(String[] args) {
 
-
+/* 
         Cliente cpf1 = new Cliente("Andrey", 20);
         Conta c001 = new Conta(cpf1, 2600);
-        
+*/        
         Cliente cpf2 = new Cliente("André", 24);
-        ContaCorrente c002 = new ContaCorrente(cpf2, 100000000);
+        ContaCorrente c002 = new ContaCorrente(cpf2, 100000000, " default");
 
         c002.mensagemEmLoop();
 
@@ -211,7 +234,7 @@ public class NewBank_2 {
 
 }
 
-
+/* 
 
 
 Parte 2 - Questões Práticas
