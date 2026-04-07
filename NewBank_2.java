@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.text.DecimalFormat;
+import java.util.regex.Pattern;
 
 class Cliente {
     protected String nome;
@@ -21,9 +22,6 @@ class Cliente {
     }
     
 }
-
-
-
 class Conta {
     protected final String titular;
     protected double saldo;
@@ -32,6 +30,11 @@ class Conta {
     public Conta(Cliente cliente, double saldo /*, String Patamar */) {
         this.titular = cliente.getNome();
         this.saldo = saldo;
+    }
+
+    private String Formatar(Double valor){
+        DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(valor);
     }
 
     public boolean verificarValorPositivo(double valor) {
@@ -61,13 +64,10 @@ class Conta {
         }
     }
 
-    
-
     public void Depositar(double valor) {
         if (verificarValorPositivo(valor) != true) {return;}
         saldo += valor;
-        DecimalFormat df = new DecimalFormat("#.00");
-        System.out.println("Deposito de R$" + df.format(valor) + " realizado com sucesso");
+        System.out.println("Deposito de R$" + Formatar(valor) + " realizado com sucesso");
     }
 
     public void Sacar(double valor) {
@@ -76,8 +76,7 @@ class Conta {
         
         saldo -= valor;
 
-        DecimalFormat df = new DecimalFormat("#.00");
-        System.out.println("Saque de R$" + df.format(valor) + " realizado com sucesso");
+        System.out.println("Saque de R$" + Formatar(valor) + " realizado com sucesso");
     }
 
     public String getTitular(){
@@ -151,8 +150,7 @@ class Conta {
                         this.Sacar(saque);
                     }
                     case 3 -> {
-                        DecimalFormat df = new DecimalFormat("#.00");
-                        System.out.println("\n \n \n O saldo atual é de: R$" + df.format(this.getSaldo()) + "\n ");
+                        System.out.println("\n \n \n O saldo atual é de: R$" + Formatar(this.getSaldo()) + "\n ");
                     }
                     case 0 -> {}
                     default -> {
@@ -172,8 +170,7 @@ class Conta {
 
         destino.saldo += valor;
 
-        DecimalFormat df = new DecimalFormat("#.00");
-        System.out.println("Transferencia de R$" + df.format(valor) + " realizada com sucesso para:" + destino.getTitular());
+        System.out.println("Transferencia de R$" + Formatar(valor) + " realizada com sucesso para:" + destino.getTitular());
     
     }
 
@@ -192,10 +189,10 @@ class ContaCorrente extends Conta{
 
         saldo -= valor*1.05; // taxa de 5%
 
-        DecimalFormat df = new DecimalFormat("#.00");
-        System.out.println("Saque de R$" + df.format(valor) + " realizado com sucesso");
+        System.out.println("Saque de R$" + Formatar(valor) + " realizado com sucesso");
     }
 }
+
 /*
 public class NewBank_2 {
     public static void main(String[] args) {
